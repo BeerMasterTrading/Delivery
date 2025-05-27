@@ -10,7 +10,7 @@ app.post("/submit", async (req, res) => {
   const formData = req.body;
 
   try {
-    const scriptResponse = await fetch("https://script.google.com/macros/s/AKfycbz7gBJ3_-xucAcUQQ6WRRs03M430eU9Dr_ybGpxyHTaxOS5f9hb8enza8LSLp9kQcNnew/exec", {
+    const scriptResponse = await fetch("https://script.google.com/macros/s/AKfycbylZXw_4Zn8qa4pjLBERscOTkBXRRNHm8LhU8bL5Z9YpoVgsGhaKXntsQtQKTDSPK6Z7w/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData)
