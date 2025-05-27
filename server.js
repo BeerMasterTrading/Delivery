@@ -7,7 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Basic validation example
+const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwBouqpQx0ycQnxGD1ckDiB_t_CRcnD3oCszLj2C5kyMphStkQv4ZWPZELNFtydx1sKeQ/exec";
+
+// Basic validation for form data
 function validateFormData(data) {
   if (!data.firstName || typeof data.firstName !== "string") {
     return "Missing or invalid 'firstName'";
@@ -15,16 +17,48 @@ function validateFormData(data) {
   if (!data.email || typeof data.email !== "string") {
     return "Missing or invalid 'email'";
   }
-  // Add more validation rules as needed
   return null;
 }
 
+// Helper function to forward data to Apps Script
+async function forwardToAppsScript(endpoint, data) {
+  const scriptResponse = await fetch(`${scriptBaseUrl}?action=${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const contentType = scriptResponse.headers.get("content-type") || "";
+  const isJson = contentType.includes("application/json");
+
+  const responseBody = isJson
+    ? await scriptResponse.json()
+    : await scriptResponse.text();
+
+  if (!scriptResponse.ok) {
+    throw {
+      status: 502,
+      message: `Apps Script error: ${scriptResponse.status}`,
+      details: responseBody,
+    };
+  }
+
+  if (isJson && responseBody.status === "error") {
+    throw {
+      status: 409,
+      message: responseBody.message || "Error from Apps Script",
+      details: responseBody.details || null,
+    };
+  }
+
+  return responseBody;
+}
+
+// /submit route
 app.post("/submit", async (req, res) => {
   console.log("Received request to /submit:", req.body);
-
   const formData = req.body;
 
-  // Validate incoming data
   const validationError = validateFormData(formData);
   if (validationError) {
     return res.status(400).json({
@@ -35,66 +69,79 @@ app.post("/submit", async (req, res) => {
   }
 
   try {
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwBouqpQx0ycQnxGD1ckDiB_t_CRcnD3oCszLj2C5kyMphStkQv4ZWPZELNFtydx1sKeQ/exec";
-
-    const scriptResponse = await fetch(scriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+    const result = await forwardToAppsScript("submit", formData);
+    return res.status(200).json({
+      status: "success",
+      message: result.message || "Data saved to Google Sheet",
+      data: result,
     });
-
-    const contentType = scriptResponse.headers.get("content-type") || "";
-
-    if (!scriptResponse.ok) {
-      const text = await scriptResponse.text();
-      console.error(`Apps Script responded with status ${scriptResponse.status}:`, text);
-      return res.status(502).json({
-        status: "error",
-        message: `Apps Script error: ${scriptResponse.status}`,
-        details: text,
-      });
-    }
-
-    if (contentType.includes("application/json")) {
-      const result = await scriptResponse.json();
-      console.log("Apps Script response JSON:", result);
-
-      if (result.status === "error") {
-        // Forward error with appropriate HTTP status
-        return res.status(409).json({
-          status: "error",
-          message: result.message || "Error from Apps Script",
-          details: result.details || null,
-        });
-      }
-
-      // Success response from Apps Script
-      return res.status(200).json({
-        status: "success",
-        message: result.message || "Data saved to Google Sheet",
-        data: result,
-      });
-    } else {
-      // Non-JSON response
-      const text = await scriptResponse.text();
-      console.error("Apps Script returned non-JSON response:", text);
-
-      return res.status(502).json({
-        status: "error",
-        message: "Apps Script returned invalid response format",
-        details: text,
-      });
-    }
   } catch (error) {
-    console.error("Error sending to Apps Script:", error);
-    return res.status(500).json({
+    console.error("Submit error:", error);
+    return res.status(error.status || 500).json({
       status: "error",
-      message: "Error processing your request",
-      details: error.message,
+      message: error.message || "Unknown error",
+      details: error.details || null,
     });
   }
 });
 
+// /resend route
+app.post("/resend", async (req, res) => {
+  console.log("Received request to /resend:", req.body);
+  const { customerID } = req.body;
+
+  if (!customerID) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing 'customerID'",
+    });
+  }
+
+  try {
+    const result = await forwardToAppsScript("resend", { customerID });
+    return res.status(200).json({
+      status: "success",
+      message: result.message || "Verification code resent",
+    });
+  } catch (error) {
+    console.error("Resend error:", error);
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Failed to resend code",
+      details: error.details || null,
+    });
+  }
+});
+
+// /verify route
+app.post("/verify", async (req, res) => {
+  console.log("Received request to /verify:", req.body);
+  const { customerID } = req.body;
+
+  if (!customerID) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing 'customerID'",
+    });
+  }
+
+  try {
+    const result = await forwardToAppsScript("verify", { customerID });
+    return res.status(200).json({
+      status: "success",
+      message: result.message || "Account verified",
+    });
+  } catch (error) {
+    console.error("Verify error:", error);
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Verification failed",
+      details: error.details || null,
+    });
+  }
+});
+
+// Start the server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Backend server running on port " + PORT);
