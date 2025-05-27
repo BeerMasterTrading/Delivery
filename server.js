@@ -57,32 +57,40 @@ async function forwardToAppsScript(endpoint, data) {
 
 // /submit route
 app.post("/submit", async (req, res) => {
-  console.log("Received request to /submit:", req.body);
-  const formData = req.body;
+  const { formData, type } = req.body;
+
+  if (!type) {
+    return res.status(400).json({ status: "error", message: "Missing request type" });
+  }
 
   const validationError = validateFormData(formData);
   if (validationError) {
-    return res.status(400).json({
-      status: "error",
-      message: "Validation failed",
-      details: validationError,
-    });
+    return res.status(400).json({ status: "error", message: "Validation failed", details: validationError });
   }
 
   try {
-    const result = await forwardToAppsScript("submit", formData);
-    return res.status(200).json({
-      status: "success",
-      message: result.message || "Data saved to Google Sheet",
-      data: result,
+    const scriptUrl = "https://script.google.com/macros/s/AKfycb.../exec";
+    const response = await fetch(scriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...formData, type })
     });
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!response.ok) {
+      const text = await response.text();
+      return res.status(502).json({ status: "error", message: "Apps Script error", details: text });
+    }
+
+    if (contentType.includes("application/json")) {
+      const result = await response.json();
+      return res.status(200).json({ status: "success", data: result });
+    } else {
+      const text = await response.text();
+      return res.status(502).json({ status: "error", message: "Invalid response format", details: text });
+    }
   } catch (error) {
-    console.error("Submit error:", error);
-    return res.status(error.status || 500).json({
-      status: "error",
-      message: error.message || "Unknown error",
-      details: error.details || null,
-    });
+    return res.status(500).json({ status: "error", message: "Internal server error", details: error.message });
   }
 });
 
