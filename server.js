@@ -102,6 +102,7 @@ app.post("/resend", async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: result.message || "Verification code resent",
+      code: result.code
     });
   } catch (error) {
     return res.status(error.status || 500).json({
