@@ -35,7 +35,7 @@ app.post("/submit", async (req, res) => {
   }
 
   try {
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbylZXw_4Zn8qa4pjLBERscOTkBXRRNHm8LhU8bL5Z9YpoVgsGhaKXntsQtQKTDSPK6Z7w/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyXbC5IlsXRmlkdB5I0vYfRNtQwkJm4i1aVpNuXpIPW2aS5S1qUoHTvWHQzrv3152hYDA/exec";
 
     const scriptResponse = await fetch(scriptUrl, {
       method: "POST",
