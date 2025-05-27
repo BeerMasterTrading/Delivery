@@ -7,9 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Google Apps Script Web App URL
 const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwBouqpQx0ycQnxGD1ckDiB_t_CRcnD3oCszLj2C5kyMphStkQv4ZWPZELNFtydx1sKeQ/exec";
 
-// Basic validation for form data
+// Basic validation for form data (used in /submit only)
 function validateFormData(data) {
   if (!data.firstName || typeof data.firstName !== "string") {
     return "Missing or invalid 'firstName'";
@@ -20,26 +21,24 @@ function validateFormData(data) {
   return null;
 }
 
-// Helper function to forward data to Apps Script
+// Forward any data to Google Apps Script
 async function forwardToAppsScript(endpoint, data) {
   const bodyData = { ...data, type: endpoint };
-  const scriptResponse = await fetch(`${scriptBaseUrl}`, {
+  
+  const response = await fetch(scriptBaseUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(bodyData),
   });
 
-  const contentType = scriptResponse.headers.get("content-type") || "";
+  const contentType = response.headers.get("content-type") || "";
   const isJson = contentType.includes("application/json");
+  const responseBody = isJson ? await response.json() : await response.text();
 
-  const responseBody = isJson
-    ? await scriptResponse.json()
-    : await scriptResponse.text();
-
-  if (!scriptResponse.ok) {
+  if (!response.ok) {
     throw {
       status: 502,
-      message: `Apps Script error: ${scriptResponse.status}`,
+      message: `Apps Script error: ${response.status}`,
       details: responseBody,
     };
   }
@@ -55,7 +54,7 @@ async function forwardToAppsScript(endpoint, data) {
   return responseBody;
 }
 
-// /submit route
+// POST /submit
 app.post("/submit", async (req, res) => {
   const { formData, type } = req.body;
 
@@ -65,37 +64,30 @@ app.post("/submit", async (req, res) => {
 
   const validationError = validateFormData(formData);
   if (validationError) {
-    return res.status(400).json({ status: "error", message: "Validation failed", details: validationError });
+    return res.status(400).json({
+      status: "error",
+      message: "Validation failed",
+      details: validationError,
+    });
   }
 
   try {
-    const response = await fetch(scriptBaseUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...formData, type })
+    const result = await forwardToAppsScript(type, formData);
+    return res.status(200).json({
+      status: "success",
+      data: result,
     });
-
-    const contentType = response.headers.get("content-type") || "";
-    if (!response.ok) {
-      const text = await response.text();
-      return res.status(502).json({ status: "error", message: "Apps Script error", details: text });
-    }
-
-    if (contentType.includes("application/json")) {
-      const result = await response.json();
-      return res.status(200).json({ status: "success", data: result });
-    } else {
-      const text = await response.text();
-      return res.status(502).json({ status: "error", message: "Invalid response format", details: text });
-    }
   } catch (error) {
-    return res.status(500).json({ status: "error", message: "Internal server error", details: error.message });
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Submit failed",
+      details: error.details || null,
+    });
   }
 });
 
-// /resend route
+// POST /resend
 app.post("/resend", async (req, res) => {
-  console.log("Received request to /resend:", req.body);
   const { customerID } = req.body;
 
   if (!customerID) {
@@ -112,18 +104,16 @@ app.post("/resend", async (req, res) => {
       message: result.message || "Verification code resent",
     });
   } catch (error) {
-    console.error("Resend error:", error);
     return res.status(error.status || 500).json({
       status: "error",
-      message: error.message || "Failed to resend code",
+      message: error.message || "Resend failed",
       details: error.details || null,
     });
   }
 });
 
-// /verify route
+// POST /verify
 app.post("/verify", async (req, res) => {
-  console.log("Received request to /verify:", req.body);
   const { customerID } = req.body;
 
   if (!customerID) {
@@ -140,7 +130,6 @@ app.post("/verify", async (req, res) => {
       message: result.message || "Account verified",
     });
   } catch (error) {
-    console.error("Verify error:", error);
     return res.status(error.status || 500).json({
       status: "error",
       message: error.message || "Verification failed",
