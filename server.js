@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = require("node-fetch"); // required for calling Apps Script
+const fetch = require("node-fetch");
 const app = express();
 
 app.use(cors());
@@ -16,7 +16,7 @@ app.post("/submit", async (req, res) => {
       body: JSON.stringify(formData)
     });
 
-    const result = await scriptResponse.json(); // Apps Script must return JSON
+    const result = await scriptResponse.json();
     res.json({ message: "Data saved!", details: result });
   } catch (error) {
     console.error("Error sending to Apps Script:", error);
