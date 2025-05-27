@@ -69,8 +69,7 @@ app.post("/submit", async (req, res) => {
   }
 
   try {
-    const scriptUrl = "https://script.google.com/macros/s/AKfycb.../exec";
-    const response = await fetch(scriptUrl, {
+    const response = await fetch(scriptBaseUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...formData, type })
