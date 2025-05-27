@@ -22,10 +22,11 @@ function validateFormData(data) {
 
 // Helper function to forward data to Apps Script
 async function forwardToAppsScript(endpoint, data) {
-  const scriptResponse = await fetch(`${scriptBaseUrl}?action=${endpoint}`, {
+  const bodyData = { ...data, type: endpoint };
+  const scriptResponse = await fetch(`${scriptBaseUrl}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify(bodyData),
   });
 
   const contentType = scriptResponse.headers.get("content-type") || "";
