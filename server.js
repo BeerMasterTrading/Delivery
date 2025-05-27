@@ -46,7 +46,6 @@ app.post("/submit", async (req, res) => {
     const contentType = scriptResponse.headers.get("content-type") || "";
 
     if (!scriptResponse.ok) {
-      // Not 2xx response from Apps Script
       const text = await scriptResponse.text();
       console.error(`Apps Script responded with status ${scriptResponse.status}:`, text);
       return res.status(502).json({
@@ -60,17 +59,27 @@ app.post("/submit", async (req, res) => {
       const result = await scriptResponse.json();
       console.log("Apps Script response JSON:", result);
 
-      res.json({
+      if (result.status === "error") {
+        // Forward error with appropriate HTTP status
+        return res.status(409).json({
+          status: "error",
+          message: result.message || "Error from Apps Script",
+          details: result.details || null,
+        });
+      }
+
+      // Success response from Apps Script
+      return res.status(200).json({
         status: "success",
-        message: "Data saved to Google Sheet",
-        appsScriptResult: result,
+        message: result.message || "Data saved to Google Sheet",
+        data: result,
       });
     } else {
-      // Response is not JSON, possibly an error page or HTML
+      // Non-JSON response
       const text = await scriptResponse.text();
       console.error("Apps Script returned non-JSON response:", text);
 
-      res.status(502).json({
+      return res.status(502).json({
         status: "error",
         message: "Apps Script returned invalid response format",
         details: text,
@@ -78,7 +87,7 @@ app.post("/submit", async (req, res) => {
     }
   } catch (error) {
     console.error("Error sending to Apps Script:", error);
-    res.status(500).json({
+    return res.status(500).json({
       status: "error",
       message: "Error processing your request",
       details: error.message,
