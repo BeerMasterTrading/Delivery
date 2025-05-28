@@ -153,17 +153,19 @@ app.post("/login", async (req, res) => {
   try {
     const result = await forwardToAppsScript(type, payload);
 
-    if (result.status === "success") {
-      return res.status(200).json({
-        status: "success",
-        customerID: result.customerID
-      });
-    } else {
-      return res.status(401).json({
-        status: "error",
-        message: result.message || "Login failed"
-      });
-    }
+      if (result.status === "success") {
+        return res.status(200).json({
+          status: "success",
+          customerID: result.customerID
+        });
+      } else {
+        return res.status(401).json({
+          status: "error",
+          message: result.message || "Login failed",
+          code: result.code || null,
+          customerID: result.customerID || null
+        });
+      }
   } catch (error) {
     return res.status(error.status || 500).json({
       status: "error",
