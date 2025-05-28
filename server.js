@@ -141,9 +141,9 @@ app.post("/verify", async (req, res) => {
 
 // POST /login
 app.post("/login", async (req, res) => {
-  const { loginID, password } = req.body;
+  const { type, ...payload } = req.body;
 
-  if (!loginID || !password) {
+  if (!payload.loginID || !payload.password) {
     return res.status(400).json({
       status: "error",
       message: "Missing login ID or password"
@@ -151,9 +151,7 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    const { loginID, password, type } = req.body;
-    const result = await forwardToAppsScript(type || "login", { loginID, password });
-
+    const result = await forwardToAppsScript(type, payload);
 
     if (result.status === "success") {
       return res.status(200).json({
@@ -174,7 +172,6 @@ app.post("/login", async (req, res) => {
     });
   }
 });
-
 
 // Start the server
 const PORT = process.env.PORT || 10000;
