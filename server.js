@@ -23,11 +23,12 @@ function validateFormData(data) {
 
 // Forward any data to Google Apps Script
 async function forwardToAppsScript(endpoint, data) {
-  // Do NOT add or override type here — assume data already has type
+  const bodyData = { ...data, type: endpoint };
+  
   const response = await fetch(scriptBaseUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data), // send data as-is, including type
+    body: JSON.stringify(bodyData),
   });
 
   const contentType = response.headers.get("content-type") || "";
@@ -37,7 +38,7 @@ async function forwardToAppsScript(endpoint, data) {
   if (!response.ok) {
     throw {
       status: 502,
-      message: `Apps Script error: ${response.status}`,
+      message: Apps Script error: ${response.status},
       details: responseBody,
     };
   }
@@ -150,7 +151,7 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-  const result = await forwardToAppsScript(type, payload);
+    const result = await forwardToAppsScript(type, payload);
 
     if (result.status === "success") {
       return res.status(200).json({
@@ -176,4 +177,4 @@ app.post("/login", async (req, res) => {
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Backend server running on port " + PORT);
-});
+}); 
