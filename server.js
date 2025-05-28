@@ -139,6 +139,41 @@ app.post("/verify", async (req, res) => {
   }
 });
 
+// POST /login
+app.post("/login", async (req, res) => {
+  const { loginID, password } = req.body;
+
+  if (!loginID || !password) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing login ID or password"
+    });
+  }
+
+  try {
+    const result = await forwardToAppsScript("login", { loginID, password });
+
+    if (result.status === "success") {
+      return res.status(200).json({
+        status: "success",
+        customerID: result.customerID
+      });
+    } else {
+      return res.status(401).json({
+        status: "error",
+        message: result.message || "Login failed"
+      });
+    }
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Login failed",
+      details: error.details || null
+    });
+  }
+});
+
+
 // Start the server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
