@@ -151,7 +151,9 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    const result = await forwardToAppsScript("login", { loginID, password });
+    const { loginID, password, type } = req.body;
+    const result = await forwardToAppsScript(type || "login", { loginID, password });
+
 
     if (result.status === "success") {
       return res.status(200).json({
