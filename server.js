@@ -24,7 +24,7 @@ function validateFormData(data) {
 // Forward any data to Google Apps Script
 async function forwardToAppsScript(endpoint, data) {
   const bodyData = { ...data, type: endpoint };
-  
+
   const response = await fetch(scriptBaseUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -40,14 +40,6 @@ async function forwardToAppsScript(endpoint, data) {
       status: 502,
       message: `Apps Script error: ${response.status}`,
       details: responseBody,
-    };
-  }
-
-  if (isJson && responseBody.status === "error") {
-    throw {
-      status: 409,
-      message: responseBody.message || "Error from Apps Script",
-      details: responseBody.details || null,
     };
   }
 
