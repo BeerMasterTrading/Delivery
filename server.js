@@ -176,13 +176,11 @@ app.post("/send-otp-forgot-password", async (req, res) => {
   }
 
   try {
-    const result = await forwardToAppsScript("forgotPassword", { loginID, type: "forgotPassword" });
+    const result = await forwardToAppsScript("forgotPassword", { loginID });
 
     return res.status(200).json({
       status: "success",
-      code: result.code,
-      email: result.email,
-      message: "OTP sent successfully",
+      ...result // includes code, email, message
     });
   } catch (error) {
     return res.status(error.status || 500).json({
