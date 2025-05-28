@@ -23,12 +23,11 @@ function validateFormData(data) {
 
 // Forward any data to Google Apps Script
 async function forwardToAppsScript(endpoint, data) {
-  const bodyData = { ...data, type: endpoint };
-  
+  // Do NOT add or override type here — assume data already has type
   const response = await fetch(scriptBaseUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(bodyData),
+    body: JSON.stringify(data), // send data as-is, including type
   });
 
   const contentType = response.headers.get("content-type") || "";
@@ -151,7 +150,7 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    const result = await forwardToAppsScript(type, payload);
+  const result = await forwardToAppsScript(type, payload);
 
     if (result.status === "success") {
       return res.status(200).json({
