@@ -167,6 +167,34 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Forgot-Password OTP sending route
+app.post("/send-otp-forgot-password", async (req, res) => {
+  const { loginID } = req.body;
+
+  if (!loginID) {
+    return res.status(400).json({ status: "error", message: "Missing loginID" });
+  }
+
+  try {
+    const result = await forwardToAppsScript("forgotPassword", { loginID, type: "forgotPassword" });
+
+    return res.status(200).json({
+      status: "success",
+      code: result.code,
+      email: result.email,
+      message: "OTP sent successfully",
+    });
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Failed to send OTP",
+      details: error.details || null,
+    });
+  }
+});
+
+
+
 // Start the server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
