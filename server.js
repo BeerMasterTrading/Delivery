@@ -38,7 +38,7 @@ async function forwardToAppsScript(endpoint, data) {
   if (!response.ok) {
     throw {
       status: 502,
-      message: Apps Script error: ${response.status},
+      message: `Apps Script error: ${response.status}`,
       details: responseBody,
     };
   }
