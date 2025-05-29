@@ -47,22 +47,25 @@ async function forwardToAppsScript(endpoint, data) {
 }
 
 // POST /submit
-app.post('/create-account', async (req, res) => {
+app.post("/create-account", async (req, res) => {
   try {
-    const response = await axios.post(GAS_ENDPOINT, req.body);
+    const result = await forwardToAppsScript("create-account", req.body);
 
-    let parsed;
-    if (typeof response.data === 'string') {
-      parsed = JSON.parse(response.data);
-    } else {
-      parsed = response.data;
-    }
+    return res.status(200).json({
+      status: result.status,
+      message: result.message,
+      customerID: result.customerID,
+      timestamp: result.timestamp,
+      verificationCode: result.verificationCode
+    });
 
-    res.json({ status: parsed.status, ...parsed });
-
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ status: 'error', message: 'Failed to create account.' });
+  } catch (error) {
+    console.error(error.details || error.message);
+    return res.status(error.status || 500).json({
+      status: "error",
+      message: error.message || "Failed to create account",
+      details: error.details || null
+    });
   }
 });
 
