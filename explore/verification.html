@@ -299,7 +299,9 @@
       const code = params.get("code");
       const customerID = params.get("customerID");
 
-      setLocalStorage("customerID", customerID);
+      if (customerID) {
+        setLocalStorage("customerID", customerID);
+      }
 
       if (code && /^\d{6}$/.test(code)) {
         code.split("").forEach((digit, index) => {
