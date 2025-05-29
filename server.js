@@ -47,34 +47,22 @@ async function forwardToAppsScript(endpoint, data) {
 }
 
 // POST /submit
-app.post("/submit", async (req, res) => {
-  const { formData, type } = req.body;
-
-  if (!type) {
-    return res.status(400).json({ status: "error", message: "Missing request type" });
-  }
-
-  const validationError = validateFormData(formData);
-  if (validationError) {
-    return res.status(400).json({
-      status: "error",
-      message: "Validation failed",
-      details: validationError,
-    });
-  }
-
+app.post('/create-account', async (req, res) => {
   try {
-    const result = await forwardToAppsScript(type, formData);
-    return res.status(200).json({
-      status: "success",
-      data: result,
-    });
-  } catch (error) {
-    return res.status(error.status || 500).json({
-      status: "error",
-      message: error.message || "Submit failed",
-      details: error.details || null,
-    });
+    const response = await axios.post(GAS_ENDPOINT, req.body);
+
+    let parsed;
+    if (typeof response.data === 'string') {
+      parsed = JSON.parse(response.data);
+    } else {
+      parsed = response.data;
+    }
+
+    res.json({ status: parsed.status, ...parsed });
+
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ status: 'error', message: 'Failed to create account.' });
   }
 });
 
