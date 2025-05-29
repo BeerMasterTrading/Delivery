@@ -31,6 +31,11 @@ const validateFormData = (type, data) => {
       if (!data.loginID || typeof data.loginID !== "string") return "Missing or invalid 'loginID'";
       break;
 
+    case "resetPassword":
+      if (!data.loginID || typeof data.loginID !== "string") return "Missing or invalid 'loginID'";
+      if (!data.newPassword || typeof data.newPassword !== "string") return "Missing or invalid 'newPassword'";
+      break;
+      
     default:
       return null;
   }
@@ -109,6 +114,7 @@ app.post("/resend", handlePost("resend", ["customerID"]));
 app.post("/verify", handlePost("verify", ["customerID"]));
 app.post("/login", handlePost("login", ["loginID", "password"]));
 app.post("/forgot-password", handlePost("forgotPassword", ["loginID"]));
+app.post("/reset-password", handlePost("resetPassword", ["loginID", "newPassword"]));
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
