@@ -46,13 +46,21 @@ async function forwardToAppsScript(endpoint, data) {
   return responseBody;
 }
 
-// POST /submit
+// POST /create-account
 app.post("/create-account", async (req, res) => {
   try {
+    // Validate form data (optional — add more checks if needed)
+    const validationError = validateFormData(req.body);
+    if (validationError) {
+      return res.status(400).json({
+        status: "error",
+        message: validationError
+      });
+    }
     const result = await forwardToAppsScript("create-account", req.body);
 
     return res.status(200).json({
-      status: result.status,
+      status: "success",
       message: result.message,
       customerID: result.customerID,
       timestamp: result.timestamp,
@@ -68,6 +76,7 @@ app.post("/create-account", async (req, res) => {
     });
   }
 });
+
 
 // POST /resend
 app.post("/resend", async (req, res) => {
