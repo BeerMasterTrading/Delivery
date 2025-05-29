@@ -8,16 +8,35 @@ app.use(express.json());
 
 const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwBouqpQx0ycQnxGD1ckDiB_t_CRcnD3oCszLj2C5kyMphStkQv4ZWPZELNFtydx1sKeQ/exec";
 
-// Optional: Validate form data (used only in create-account)
+// Basic validation per type
 const validateFormData = (type, data) => {
-  if (type === "create-account") {
-    if (!data.firstName || typeof data.firstName !== "string") return "Missing or invalid 'firstName'";
-    if (!data.email || typeof data.email !== "string") return "Missing or invalid 'email'";
+  switch (type) {
+    case "create-account":
+      if (!data.firstName || typeof data.firstName !== "string") return "Missing or invalid 'firstName'";
+      if (!data.email || typeof data.email !== "string") return "Missing or invalid 'email'";
+      if (!data.password || typeof data.password !== "string") return "Missing or invalid 'password'";
+      break;
+
+    case "resend":
+    case "verify":
+      if (!data.customerID || typeof data.customerID !== "string") return "Missing or invalid 'customerID'";
+      break;
+
+    case "login":
+      if (!data.loginID || typeof data.loginID !== "string") return "Missing or invalid 'loginID'";
+      if (!data.password || typeof data.password !== "string") return "Missing or invalid 'password'";
+      break;
+
+    case "forgotPassword":
+      if (!data.loginID || typeof data.loginID !== "string") return "Missing or invalid 'loginID'";
+      break;
+
+    default:
+      return null;
   }
   return null;
 };
 
-// Forward request to Apps Script
 const forwardToAppsScript = async (type, data) => {
   const response = await fetch(scriptBaseUrl, {
     method: "POST",
@@ -48,16 +67,18 @@ const forwardToAppsScript = async (type, data) => {
   return body;
 };
 
-// Generic handler for POST endpoints
+// Generic POST handler creator
 const handlePost = (type, requiredFields = []) => async (req, res) => {
   const data = req.body;
 
+  // Check required fields presence before type-specific validation
   for (const field of requiredFields) {
     if (!data[field]) {
       return res.status(400).json({ status: "error", message: `Missing '${field}'` });
     }
   }
 
+  // Run additional validation by type
   const validationError = validateFormData(type, data);
   if (validationError) {
     return res.status(400).json({ status: "error", message: validationError });
@@ -69,11 +90,11 @@ const handlePost = (type, requiredFields = []) => async (req, res) => {
     if (result.status === "success") {
       return res.status(200).json(result);
     } else {
-      return res.status(400).json({ status: "error", message: result.message });
+      return res.status(400).json({ status: "error", message: result.message || "Error from Apps Script" });
     }
 
   } catch (error) {
-    console.error(error.details || error.message);
+    console.error("Error forwarding request:", error.details || error.message);
     return res.status(error.status || 500).json({
       status: "error",
       message: error.message || "Unexpected error",
@@ -82,14 +103,14 @@ const handlePost = (type, requiredFields = []) => async (req, res) => {
   }
 };
 
-// Routes
-app.post("/create-account", handlePost("create-account"));
+// Define routes with required fields for minimal validation
+app.post("/create-account", handlePost("create-account", ["firstName", "email", "password"]));
 app.post("/resend", handlePost("resend", ["customerID"]));
 app.post("/verify", handlePost("verify", ["customerID"]));
 app.post("/login", handlePost("login", ["loginID", "password"]));
-app.post("/send-otp-forgot-password", handlePost("forgotPassword", ["loginID"]));
+app.post("/forgot-password", handlePost("forgotPassword", ["loginID"]));
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log("✅ Backend server running on port " + PORT);
+  console.log(`✅ Backend server running on port ${PORT}`);
 });
