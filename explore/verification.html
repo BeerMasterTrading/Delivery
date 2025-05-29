@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BMT | Verify Account</title>
+  <link rel="stylesheet" href="../resources/css/home.css"/>
+  <link rel="stylesheet" href="../resources/css/onboarding.css"/>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <script src="../resources/js/dropdown.js" defer></script>
+  <link rel="icon" href="https://i.ibb.co/RkFt9KR2/App-Logo.png" type="image/png" />
+  <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <style>
+    .code-boxes {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 0.25rem;
+    }
+
+    .code-box {
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.8rem;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+    }
+
+    .code-box:focus {
+      border-color: #28a745; /* brand green */
+      box-shadow: 0 0 5px #28a745aa;
+    }
+
+    .code-box.input-error {
+      border-color: #dc3545; /* red error */
+      box-shadow: 0 0 5px #dc3545aa;
+    }
+
+    /* Style resend button */
+    .resend-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    #resendBtn {
+      background: transparent;
+      border: none;
+      color: #28a745;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+
+    #resendBtn:disabled {
+      color: #aaa;
+      cursor: default;
+      text-decoration: none;
+    }
+
+    /* Loading button style */
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with brand and menu button -->
+  <div class="brand-wrapper">
+    <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="Logo" class="brand-logo" />
+    <div class="brand">
+      <strong>BEERMASTERTRADING</strong>
+      <span>DELIVERY</span>
+    </div>
+  </div>
+  <header>
+    <button class="menu-button" onclick="openMenu()"><i class='bx bx-menu' id="toggle-icon"></i></button>
+  </header>
+  <div class="horizontal-menu"></div>
+
+  <!-- Full screen sliding side menu -->
+  <div id="sideMenu" class="side-menu">
+    <button class="close-button" onclick="closeMenu()">✕</button>
+    <div class="menu-content">
+      <a href="../" class="menu-item"><i class='bx bx-home'></i> Home</a>
+      <a href="login" class="menu-item"><i class='bx bx-user'></i> Login</a>
+      <a href="#" class="menu-item"><i class='bx bx-info-circle'></i> About</a>
+      <a href="#" class="menu-item"><i class='bx bx-phone'></i> Contact</a>
+    </div>
+  </div>
+
+  <section class="onboarding-form-section">
+    <h2>Verify Your Account</h2>
+    <form class="onboarding-form" id="verificationForm" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
+      <div class="form-group full-width">
+        <label for="verificationCodeBoxes" style="text-align: center;">Enter the 6-digit code sent to your email</label>
+        <div id="verificationCodeBoxes" class="code-boxes" aria-label="6-digit verification code" role="group">
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+          <input type="text" inputmode="numeric" pattern="\d" maxlength="1" class="code-box" autocomplete="off" />
+        </div>
+        <small class="feedback" style="text-align: center;">Code must be 6 digits.</small>
+      </div>
+
+      <div class="resend-group">
+        <span id="countdownText" class="countdown-text">Didn't get the code? </span>
+        <button type="button" id="resendBtn" class="secondary-button" disabled>Click to resend</button>
+      </div>
+
+      <button type="submit" class="cta-button">Verify</button>
+    </form>
+  </section>
+
+  <div id="notification" class="notification hidden">
+    <span id="notification-text"></span>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="BMT Logo" />
+        <span>Beer Master Trading Inc.</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Support</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Beer Master Trading Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../resources/js/notification.js"></script>
+  <script>
+    function getLocalStorage(key) {
+      return localStorage.getItem(key);
+    }
+
+    function setLocalStorage(key, value) {
+      localStorage.setItem(key, value);
+    }
+
+    function removeLocalStorage(key) {
+      localStorage.removeItem(key);
+    }
+
+    const verificationForm = document.getElementById("verificationForm");
+    const codeBoxes = document.querySelectorAll(".code-box");
+    const feedback = document.querySelector(".feedback");
+    const resendBtn = document.getElementById("resendBtn");
+    const countdownText = document.getElementById("countdownText");
+    const verifyBtn = verificationForm.querySelector("button[type=submit]");
+
+// Auto-focus next box and allow backspace to previous
+    codeBoxes.forEach((box, i) => {
+      box.addEventListener("input", (e) => {
+        const value = e.target.value;
+        if (/^\d$/.test(value)) {
+          if (i < codeBoxes.length - 1) {
+            codeBoxes[i + 1].focus();
+          }
+        } else {
+      e.target.value = ""; // clear invalid input
+    }
+  });
+
+      box.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && box.value === "" && i > 0) {
+          codeBoxes[i - 1].focus();
+        }
+      });
+    });
+
+// Submit handler
+    verificationForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const enteredCode = Array.from(codeBoxes).map(box => box.value.trim()).join("");
+      const storedCode = getLocalStorage("verificationCode");
+      const customerID = getLocalStorage("customerID");
+
+      feedback.style.display = "none";
+      codeBoxes.forEach(box => box.classList.remove("input-error"));
+
+      if (!enteredCode || enteredCode.length !== 6 || enteredCode !== storedCode) {
+        feedback.textContent = "Incorrect verification code.";
+        feedback.style.display = "block";
+        codeBoxes.forEach(box => box.classList.add("input-error"));
+        return;
+      }
+
+  // Disable verify button and show loading
+      verifyBtn.disabled = true;
+      verifyBtn.classList.add("loading");
+      verifyBtn.textContent = "";
+
+      try {
+        const res = await fetch("https://delivery-xoae.onrender.com/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customerID, type: "verify" })
+        });
+
+        const result = await res.json();
+
+        if (result.status === "success") {
+          showNotification("Account verified successfully!", "success");
+          setTimeout(() => {
+            window.location.href = "../../dashboard";
+          }, 3000);
+
+          if (customerID) {
+        // Save loggedInCustomerID, clear temp storage
+            setLocalStorage("loggedInCustomerID", customerID);
+            removeLocalStorage("customerID");
+            removeLocalStorage("verificationCode");
+          }
+        } else {
+          throw new Error("Failed to verify.");
+        }
+      } catch (error) {
+        showNotification("Verification failed. Please try again.", "error");
+      }
+
+      verifyBtn.disabled = false;
+      verifyBtn.classList.remove("loading");
+      verifyBtn.textContent = "Verify";
+    });
+
+    let resendCooldown = 60;
+    let countdownInterval;
+
+    function startCountdown() {
+      resendBtn.disabled = true;
+      updateCountdownText(resendCooldown);
+
+      countdownInterval = setInterval(() => {
+        resendCooldown--;
+        if (resendCooldown <= 0) {
+          clearInterval(countdownInterval);
+          resendBtn.disabled = false;
+          countdownText.textContent = "Didn't get the code? ";
+        } else {
+          updateCountdownText(resendCooldown);
+        }
+      }, 1000);
+    }
+
+    function updateCountdownText(seconds) {
+      countdownText.textContent = `Didn't get the code? Wait ${seconds}s `;
+    }
+
+    resendBtn.addEventListener("click", async () => {
+      resendBtn.disabled = true;
+      resendCooldown = 60;
+      startCountdown();
+
+      try {
+        const customerID = getLocalStorage("customerID");
+        const res = await fetch("https://delivery-xoae.onrender.com/resend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customerID })
+        });
+
+        const result = await res.json();
+
+        if (result.status === "success") {
+          setLocalStorage("verificationCode", result.data.newCode);
+          showNotification("Verification code resent!", "success");
+        } else {
+          throw new Error("Resend failed");
+        }
+      } catch (err) {
+        showNotification("Failed to resend code. Please try again.", "error");
+      }
+    });
+
+    function fillCodeFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const customerID = params.get("customerID");
+
+      setLocalStorage("customerID", customerID);
+
+      if (code && /^\d{6}$/.test(code)) {
+        code.split("").forEach((digit, index) => {
+          if (codeBoxes[index]) {
+            codeBoxes[index].value = digit;
+            document.getElementById("verificationForm").requestSubmit();
+          }
+        });
+      }
+    }
+
+    history.replaceState(null, null, location.href);
+    window.onpopstate = function () {
+      history.go(1);
+    };
+
+    window.onload = () => {
+      fillCodeFromURL();
+      startCountdown();
+    };
+
+  </script>
+</body>
+</html>

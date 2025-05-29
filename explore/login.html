@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BMT | Login</title>
+  <link rel="stylesheet" href="../resources/css/home.css"/>
+  <link rel="stylesheet" href="../resources/css/login.css"/>
+  <script src="../resources/js/dropdown.js" defer></script>
+  <link rel="icon" href="https://i.ibb.co/RkFt9KR2/App-Logo.png" type="image/png" />
+  <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    .onboarding-form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .form-input {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 5px #28a745aa;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="brand-wrapper">
+    <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="Logo" class="brand-logo" />
+    <div class="brand">
+      <strong>BEERMASTERTRADING</strong>
+      <span>DELIVERY</span>
+    </div>
+  </div>
+
+  <header>
+    <button class="menu-button" onclick="openMenu()"><i class='bx bx-menu'></i></button>
+  </header>
+  <div class="horizontal-menu"></div>
+
+  <div id="sideMenu" class="side-menu">
+    <button class="close-button" onclick="closeMenu()">✕</button>
+    <div class="menu-content">
+      <a href="../" class="menu-item"><i class='bx bx-home'></i> Home</a>
+      <a href="#" class="menu-item"><i class='bx bx-user'></i> Login</a>
+      <a href="/explore/onboarding" class="menu-item"><i class='bx bx-user-plus'></i> Create Account</a>
+      <a href="#" class="menu-item"><i class='bx bx-info-circle'></i> About</a>
+      <a href="#" class="menu-item"><i class='bx bx-phone'></i> Contact</a>
+    </div>
+  </div>
+
+  <section class="onboarding-form-section">
+    <h2>Login to Your Account</h2>
+    <form class="onboarding-form" id="loginForm" autocomplete="off" spellcheck="false">
+      <div class="form-group full-width">
+        <input type="text" id="loginID" name="loginID" placeholder="Enter your email or phone number" />
+      </div>
+
+      <div class="form-group full-width">
+        <div class="input-wrapper">
+          <input type="password" id="password" name="password" placeholder="Enter your password" />
+          <i class="bx bx-show toggle-password" id="togglePassword"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="cta-button" id="loginBtn">Login</button>
+      </div>
+
+      <div class="form-group" style="text-align: center;">
+        <a href="forgotpassword" id="forgotPassword" style="font-size: 0.9rem; color: #28a745;">Forgot password?</a>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #ccc; margin-top: 40px;margin-bottom: 40px;" />
+
+      <div class="form-group">
+        <a href="/explore/onboarding" class="cta-button yellow-button">Create Account</a>
+      </div>
+
+
+    </form>
+  </section>
+
+  <div id="notification" class="notification hidden">
+    <span id="notification-text"></span>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="BMT Logo" />
+        <span>Beer Master Trading Inc.</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Support</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Beer Master Trading Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../resources/js/notification.js"></script>
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      togglePassword.classList.toggle("bx-show");
+      togglePassword.classList.toggle("bx-hide");
+    });
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const loginID = document.getElementById("loginID").value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!loginID || !password) {
+        showNotification("Please enter your login details.", "error");
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.classList.add("loading");
+      loginBtn.textContent = "";
+
+      try {
+        const res = await fetch("https://delivery-xoae.onrender.com/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ loginID, password, type: "login" })
+        });
+
+        const data = await res.json();
+
+        if (data.status === "success") {
+          showNotification("Login successful!", "success");
+          document.cookie = `loggedInCustomerID=${data.customerID}; path=/; max-age=86400; secure; samesite=strict`;
+
+          setTimeout(() => {
+            window.location.href = "dashboard";
+          }, 2000);
+        } else if (
+          data.message === "Account not verified. Verification code resent."
+        ) {
+          showNotification(data.message, "error");
+
+          // Set cookies for verification page
+          document.cookie = `loggedInCustomerID=; path=/; max-age=86400; secure; samesite=strict`;
+          document.cookie = `verificationCode=${data.code}; path=/; max-age=300; secure; samesite=strict`;
+          document.cookie = `customerID=${data.customerID}; path=/; max-age=86400`;
+
+          setTimeout(() => {
+            window.location.href = "verification";
+          }, 2000);
+        } else {
+          throw new Error(data.message || "Invalid credentials");
+        }
+      } catch (err) {
+        showNotification(err.message || "Login failed. Please check your credentials.", "error");
+      }
+
+
+
+      loginBtn.disabled = false;
+      loginBtn.classList.remove("loading");
+      loginBtn.textContent = "Login";
+    });
+  </script>
+</body>
+</html>

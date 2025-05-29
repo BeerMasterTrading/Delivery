@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>BMT Email Verification</title>
+  <style>
+    /* General resets for email clients */
+    body, table, td, a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    table, td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      -ms-interpolation-mode: bicubic;
+    }
+
+    /* Responsive styles */
+    @media screen and (max-width: 620px) {
+      .email-container {
+        width: 95% !important;
+        padding: 15px !important;
+      }
+      .code {
+        font-size: 24px !important;
+        padding: 12px 20px !important;
+        width: 100% !important;
+        letter-spacing: 4px !important;
+      }
+      .btn-link {
+        font-size: 16px !important;
+        padding: 12px 25px !important;
+      }
+      h1 {
+        font-size: 22px !important;
+      }
+      .message {
+        font-size: 16px !important;
+      }
+      .company-name {
+        font-size: 16px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f9fafb; font-family: Arial, sans-serif; color:#333;">
+
+  <center>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f9fafb; padding:20px 0;">
+      <tr>
+        <td align="center">
+
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" class="email-container" style="background-color:#ffffff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); padding:30px;">
+
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding-bottom:10px;">
+                <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="BMT Logo" width="150" style="display:block; border:none; outline:none; text-decoration:none;"/>
+              </td>
+            </tr>
+
+            <!-- Company Name -->
+            <tr>
+              <td align="center" style="font-size:18px; font-weight:400; color:#c87f10; margin-bottom:25px; padding-bottom:25px; border-bottom: 1px solid #f3a01b;">
+                Beer Master Trading Inc.
+              </td>
+            </tr>
+
+            <!-- Heading -->
+            <tr>
+              <td align="center" style="font-size:28px; font-weight:bold; color:#c87f10; padding:30px 10px 30px 10px;">
+                Here's your BMT Verification Code
+              </td>
+            </tr>
+
+            <!-- Box with content -->
+            <tr>
+              <td align="center" style="border:2px solid #c87f10; border-radius:12px; background:#fff9e5; padding:25px;">
+
+                <!-- Message -->
+                <p style="font-size:18px; margin-bottom:25px; margin-top:0;">
+                  Continue your journey with us by entering the code below:
+                </p>
+
+                <!-- Code -->
+                <div style="display:inline-block; font-size:32px; font-weight:bold; color:#c87f10; letter-spacing:6px; padding:15px 35px; user-select: all; width:80%; max-width:300px; margin-bottom:30px;">
+                  027545
+                </div>
+
+                <!-- Button -->
+                <a href="{{VERIFICATION_LINK}}" target="_blank" rel="noopener" 
+                   style="background-color:#f3a01b; color:#333 !important; text-decoration:none; font-weight:bold; font-size:18px; padding:15px 40px; border-radius:30px; display:inline-block; margin-bottom:15px;">
+                  Verify Now
+                </a>
+              </td>
+            </tr>
+
+            <!-- Fallback link -->
+            <tr>
+              <td style="font-size:14px; color:#666; padding-top:20px;">
+                Not able to enter the code? Paste the following link into your browser:<br />
+                <a href="{{VERIFICATION_LINK}}" target="_blank" rel="noopener" style="color:#c87f10; word-break: break-all;">{{VERIFICATION_LINK}}</a>
+              </td>
+            </tr>
+
+            <!-- Divider -->
+            <tr>
+              <td style="padding:30px 0;">
+                <hr style="border:none; border-top:1px solid #ccc; margin:0;" />
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="font-size:12px; color:#999; line-height:1.5;">
+                <a href="https://yourdomain.com/terms" style="color:#c87f10; text-decoration:none; margin: 0 8px;">Terms</a> •
+                <a href="https://yourdomain.com/privacy" style="color:#c87f10; text-decoration:none; margin: 0 8px;">Privacy</a> •
+                <a href="https://yourdomain.com/signin" style="color:#c87f10; text-decoration:none; margin: 0 8px;">Sign in to BMT</a>
+                <br /><br />
+                You're receiving this email because you registered with BMT Inc.<br />
+                BMT Inc. • 140 Cabrera Road Tower Hills Subd Dolores • Taytay Rizal Philippines 1920
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </center>
+
+</body>
+</html>

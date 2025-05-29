@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BMT | Create Account</title>
+  <link rel="stylesheet" href="../resources/css/home.css"/>
+  <link rel="stylesheet" href="../resources/css/onboarding.css"/>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <link rel="icon" href="https://i.ibb.co/RkFt9KR2/App-Logo.png" type="image/png" />
+  <script src="../resources/js/dropdown.js" defer></script>
+  <link href='https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+.form-group {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 5px #28a745aa;
+}
+
+  </style>
+</head>
+<body>
+
+  <div id="notification" class="notification hidden">
+    <span id="notification-text"></span>
+  </div>
+
+
+  <!-- Header with brand and menu button -->
+  <div class="brand-wrapper">
+    <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="Logo" class="brand-logo" />
+    <div class="brand">
+      <strong>BEERMASTERTRADING</strong>
+      <span>DELIVERY</span>
+    </div>
+  </div>
+  <header>
+
+    <button class="menu-button" onclick="openMenu()"><i class='bx bx-menu' id="toggle-icon"></i></button>
+  </header>
+  <div class="horizontal-menu">
+    <a href="login">Already have account?</a>
+    <a href="#">Support</a>
+  </div>
+
+
+  <!-- Full screen sliding side menu -->
+  <div id="sideMenu" class="side-menu">
+    <button class="close-button" onclick="closeMenu()">✕</button>
+    <div class="menu-content">
+      <a href="../" class="menu-item"><i class='bx bx-home'></i> Home</a>
+      <a href="login" class="menu-item"><i class='bx bx-user'></i> Login</a>
+      <a href="#" class="menu-item"><i class='bx bx-info-circle'></i> About</a>
+      <a href="#" class="menu-item"><i class='bx bx-phone'></i> Contact</a>
+    </div>
+  </div>
+
+  <!-- Home Content -->
+  <section class="onboarding-form-section">
+    <h2>Create Your Account</h2>
+    <form class="onboarding-form">
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name <span class="required">*</span></label>
+          <input type="text" id="firstName" name="firstName" />
+          <small class="feedback">Please enter your first name.</small>
+        </div>
+        <div class="form-group">
+          <label for="middleName">Middle Name</label>
+          <input type="text" id="middleName" name="middleName" />
+          <small class="feedback">Optional field.</small>
+        </div>
+        <div class="form-group">
+          <label for="surname">Surname <span class="required">*</span></label>
+          <input type="text" id="surname" name="surname" />
+          <small class="feedback">Please enter your last name.</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="birthday">Birthday <span class="required">*</span></label>
+          <input type="date" id="birthday" name="birthday" />
+          <small class="feedback">Select your date of birth.</small>
+        </div>
+        <div class="form-group">
+          <label for="storeName">Store Name <span class="required">*</span></label>
+          <input type="text" id="storeName" name="storeName" />
+          <small class="feedback">Enter your store or business name.</small>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="email">Email Address <span class="required">*</span></label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" />
+        <small class="feedback">Please enter a valid email address.</small>
+      </div>
+
+      <div class="form-group full-width" style="position: relative;">
+        <label>Password <span class="required">*</span></label>
+
+        <input type="password" id="password" name="password" placeholder="Enter your password" style="padding-right: 40px;" />
+        <small class="feedback">Password must be at least 6 characters.</small>
+        <i id="togglePassword" class='bx bx-show'
+        style="position: absolute; right: 10px; top: 45px; cursor: pointer; font-size: 20px; color: #666;"
+        aria-label="Show password"
+        role="button"
+        tabindex="0"></i>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="phone">Phone Number <span class="required">*</span></label>
+        <input type="tel" id="phone" name="phone" placeholder="0912 345 6789" />
+        <small class="feedback">Enter a valid Philippine mobile number.</small>
+      </div>
+      <div class="form-group">
+        <label for="province">Province <span class="required">*</span></label>
+        <select id="province" name="province">
+          <!-- options go here -->
+        </select>
+        <small class="feedback">Choose your province in Region A4.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="city">City / Municipality <span class="required">*</span></label>
+        <select id="city" name="city">
+          <!-- options go here -->
+        </select>
+        <small class="feedback">Choose your city in Region A4.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="barangay">Barangay <span class="required">*</span></label>
+        <select id="barangay" name="barangay">
+          <!-- options go here -->
+        </select>
+        <small class="feedback">Choose your barangay in the selected city.</small>
+      </div>
+      <div class="form-group">
+        <label for="floor">Floor / Block No.</label>
+        <input type="text" id="floor" name="floor" />
+        <small class="feedback">Optional: unit, floor, block number.</small>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="street">Street <span class="required">*</span></label>
+          <input type="text" id="street" name="street" />
+          <small class="feedback">Enter your street name or barangay.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="postal">Postal Code <span class="required">*</span></label>
+        <input type="text" id="postal" name="postal" />
+        <small class="feedback">Enter your postal/ZIP code (e.g., 1605).</small>
+      </div>
+    </div>
+
+    <div class="terms-wrapper">
+      <input type="checkbox" id="agreeTerms" />
+      <label for="agreeTerms">
+        I agree to the <a href="#" id="termsLink">Terms and Conditions</a>.
+      </label>
+    </div>
+
+    <div id="termsModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeTermsModal()">✕</span>
+        <h2>Terms and Conditions</h2>
+        <p>
+          By using this platform, you agree to our terms of service, which include
+          but are not limited to: responsible ordering, timely payment, and proper
+          usage of our delivery services. Failure to comply may result in account
+          restrictions or termination.
+        </p>
+        <p>
+          We reserve the right to change these terms at any time. Please check this
+          page regularly for updates.
+        </p>
+      </div>
+    </div>
+
+
+    <button type="submit" class="cta-button">Submit</button>
+  </form>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <img src="https://i.ibb.co/RkFt9KR2/App-Logo.png" alt="BMT Logo">
+      <span>Beer Master Trading Inc.</span>
+    </div>
+    <div class="footer-links">
+      <a href="#">About</a>
+      <a href="#">Support</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Beer Master Trading Inc. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="../resources/js/barangayAPI.js" type="application/javascript"></script>
+<script src="../resources/js/notification.js" type="application/javascript"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector(".onboarding-form");
+  const submitBtn = form.querySelector(".cta-button");
+  const requiredFields = ["firstName", "surname", "birthday", "storeName", "email", "password", "phone", "province", "city", "barangay", "street", "postal"];
+  const agreeTermsCheckbox = form.querySelector("#agreeTerms");
+
+  // Clear input error state on input
+  requiredFields.forEach(field => {
+    const input = form[field];
+    input.addEventListener("input", () => {
+      input.classList.remove("input-error");
+      const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+      if (feedback) feedback.style.display = "none";
+    });
+  });
+
+  // Clear checkbox error
+  agreeTermsCheckbox.addEventListener("change", () => {
+    agreeTermsCheckbox.classList.remove("input-error");
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Disable and show loading
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+    submitBtn.textContent = "";
+
+    // Collect form data
+    const formData = {
+      firstName: form.firstName.value.trim(),
+      middleName: form.middleName.value.trim(),
+      surname: form.surname.value.trim(),
+      birthday: form.birthday.value,
+      storeName: form.storeName.value.trim(),
+      email: form.email.value.trim(),
+      password: form.password.value,
+      phone: form.phone.value.trim(),
+      province: form.province.value,
+      city: form.city.value,
+      barangay: form.barangay.value,
+      floor: form.floor.value.trim(),
+      street: form.street.value.trim(),
+      postal: form.postal.value.trim()
+    };
+
+    let hasError = false;
+    let firstInvalidInput = null;
+
+    // 1. Required field validation
+    requiredFields.forEach(field => {
+      const input = form[field];
+      const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+
+      if (!formData[field]) {
+        input.classList.add("input-error");
+        if (feedback) feedback.style.display = "block";
+        if (!firstInvalidInput) firstInvalidInput = input;
+        hasError = true;
+      }
+    });
+
+    // 2. Email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      const input = form.email;
+      const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+      input.classList.add("input-error");
+      if (feedback) {
+        feedback.style.display = "block";
+        feedback.textContent = "Please enter a valid email address.";
+      }
+      if (!firstInvalidInput) firstInvalidInput = input;
+      hasError = true;
+    }
+
+    // 3. Age check (18+)
+    const birthday = new Date(formData.birthday);
+    const age = new Date().getFullYear() - birthday.getFullYear();
+    if (birthday && age < 18) {
+      const input = form.birthday;
+      const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+      input.classList.add("input-error");
+      if (feedback) {
+        feedback.style.display = "block";
+        feedback.textContent = "You must be at least 18 years old.";
+      }
+      if (!firstInvalidInput) firstInvalidInput = input;
+      hasError = true;
+    }
+
+    // 4. Password length check
+    if (formData.password.length < 6) {
+      const input = form.password;
+      const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+      input.classList.add("input-error");
+      if (feedback) {
+        feedback.style.display = "block";
+        feedback.textContent = "Password must be at least 6 characters.";
+      }
+      if (!firstInvalidInput) firstInvalidInput = input;
+      hasError = true;
+    }
+
+    // 5. Terms checkbox check
+    if (!agreeTermsCheckbox.checked) {
+      agreeTermsCheckbox.classList.add("input-error");
+      showNotification("You must agree to the Terms and Conditions.", "error");
+      agreeTermsCheckbox.scrollIntoView({ behavior: "smooth", block: "center" });
+      agreeTermsCheckbox.focus();
+      hasError = true;
+    }
+
+    // Final check
+    if (hasError) {
+      if (firstInvalidInput) {
+        firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        firstInvalidInput.focus();
+      }
+      showNotification("Please fix the highlighted errors.", "error");
+      resetSubmitButton();
+      return;
+    }
+
+    // 6. Submit to backend
+    try {
+      const res = await fetch("https://delivery-xoae.onrender.com/create-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await res.json();
+      console.log("Server response:", result);
+
+      if (!res.ok || result.status !== "success") {
+        const message = result.message || "Unexpected server error.";
+
+        if (message.includes("Email already exists")) {
+          const input = form.email;
+          const feedback = input.closest(".form-group")?.querySelector("small.feedback");
+          input.classList.add("input-error");
+          if (feedback) {
+            feedback.style.display = "block";
+            feedback.textContent = "Email already exists. Try another.";
+          }
+          showNotification("Email already exists.", "error");
+          input.scrollIntoView({ behavior: "smooth", block: "center" });
+          input.focus();
+        } else {
+          console.error("Server Error:", message);
+          showNotification(message, "error");
+        }
+
+        resetSubmitButton();
+        return;
+      }
+
+      // 7. Success - store to localStorage
+      const { customerID, verificationCode, timestamp } = result.data;
+
+      localStorage.setItem("customerID", customerID);
+      localStorage.setItem("verificationCode", verificationCode);
+
+      showNotification("Account created successfully!", "success");
+
+      setTimeout(() => {
+        window.location.href = "verification";
+      }, 3000);
+
+
+    } catch (err) {
+      console.error("Request failed:", err);
+      showNotification("Network or server error. Please try again.", "error");
+    }
+
+    resetSubmitButton();
+  });
+
+
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
+
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    togglePassword.classList.toggle("bx-show");
+    togglePassword.classList.toggle("bx-hide");
+  });
+
+  togglePassword.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      togglePassword.click();
+    }
+  });
+
+    function resetSubmitButton() {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("loading");
+      submitBtn.textContent = "Submit";
+    }
+  });
+</script>
+<script>
+  // Get modal and trigger elements
+  const termsLink = document.getElementById('termsLink');
+  const termsModal = document.getElementById('termsModal');
+  const closeBtn = document.querySelector('.close-modal');
+
+  // Function to open the modal
+  termsLink.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default anchor behavior
+    termsModal.style.display = 'block';
+  });
+
+  // Function to close the modal
+  function closeTermsModal() {
+    termsModal.style.display = 'none';
+  }
+
+  // Close modal when clicking outside the modal content
+  window.addEventListener('click', function (e) {
+    if (e.target === termsModal) {
+      closeTermsModal();
+    }
+  });
+
+  // Optional: make close button also work directly
+  closeBtn.addEventListener('click', closeTermsModal);
+</script>
+
+
+</body>
+</html>
