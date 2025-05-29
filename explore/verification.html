@@ -300,6 +300,7 @@
       const customerID = params.get("customerID");
 
       if (customerID) {
+        setLocalStorage("verificationCode", code);
         setLocalStorage("customerID", customerID);
       }
 
