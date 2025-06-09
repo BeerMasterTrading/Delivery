@@ -1,4 +1,9 @@
-  async function loadProvinces() {
+const provinceSelect = document.getElementById("province");
+const citySelect = document.getElementById("city");
+const barangaySelect = document.getElementById("barangay");
+const regionCode = "040000000";
+
+async function loadProvinces() {
     try {
       const res = await fetch('https://psgc.gitlab.io/api/provinces.json');
       const provinces = await res.json();
