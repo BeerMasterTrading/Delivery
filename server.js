@@ -44,7 +44,7 @@ const validateFormData = (type, data) => {
       for (const item of data.items) {
         if (!item.productCode || typeof item.productCode !== "string") return "Each item must have a valid 'productCode'";
         if (typeof item.quantity !== "number" || item.quantity <= 0) return "Each item must have a valid 'quantity'";
-        if (typeof item.price !== "number" || item.price < 0) return "Each item must have a valid 'price'";
+        if (typeof item.total !== "number" || item.total < 0) return "Each item must have a valid 'price'";
       }
       break;
 
