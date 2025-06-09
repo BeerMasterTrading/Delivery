@@ -1,92 +1,56 @@
-const regionCode = "040000000";
-  const provinceSelect = document.getElementById("province");
-  const citySelect = document.getElementById("city");
-  const barangaySelect = document.getElementById("barangay");
-
   async function loadProvinces() {
     try {
       const res = await fetch('https://psgc.gitlab.io/api/provinces.json');
-      if (!res.ok) throw new Error('Failed to fetch provinces');
       const provinces = await res.json();
-
-      const filteredProvinces = provinces.filter(p => p.regionCode && p.regionCode.startsWith(regionCode));
-
-      filteredProvinces.sort((a, b) => a.name.localeCompare(b.name));
+      const filtered = provinces.filter(p => p.regionCode && p.regionCode.startsWith(regionCode));
 
       provinceSelect.innerHTML = `<option value="">Select a province</option>`;
-      filteredProvinces.forEach(province => {
-        const option = document.createElement("option");
-        option.value = province.code;
-        option.textContent = province.name;
-        provinceSelect.appendChild(option);
+      filtered.sort((a, b) => a.name.localeCompare(b.name)).forEach(province => {
+        provinceSelect.innerHTML += `<option value="${province.name}">${province.name}</option>`;
       });
-    } catch (error) {
-      console.error("Error loading provinces:", error);
+    } catch (err) {
+      console.error("Provinces fetch error:", err);
     }
   }
 
   provinceSelect.addEventListener("change", async () => {
+    const provinceCode = provinceSelect.value;
+    citySelect.disabled = !provinceCode;
+    barangaySelect.disabled = true;
     citySelect.innerHTML = `<option value="">Select a city/municipality</option>`;
     barangaySelect.innerHTML = `<option value="">Select a barangay</option>`;
-    barangaySelect.disabled = true;
 
-    const provinceCode = provinceSelect.value;
-    if (!provinceCode) {
-      citySelect.disabled = true;
-      return;
-    }
-    citySelect.disabled = false;
+    if (!provinceCode) return;
 
     try {
       const res = await fetch('https://psgc.gitlab.io/api/cities-municipalities.json');
-      if (!res.ok) throw new Error('Failed to fetch cities');
       const cities = await res.json();
-
-      const filteredCities = cities.filter(c => c.provinceCode === provinceCode);
-      filteredCities.sort((a, b) => a.name.localeCompare(b.name));
-
-      filteredCities.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city.code;
-        option.textContent = city.name;
-        citySelect.appendChild(option);
+      const filtered = cities.filter(c => c.provinceCode === provinceCode);
+      filtered.sort((a, b) => a.name.localeCompare(b.name)).forEach(city => {
+        citySelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
       });
-    } catch (error) {
-      console.error("Error loading cities:", error);
+    } catch (err) {
+      console.error("Cities fetch error:", err);
     }
   });
 
   citySelect.addEventListener("change", async () => {
+    const cityCode = citySelect.value;
+    barangaySelect.disabled = !cityCode;
     barangaySelect.innerHTML = `<option value="">Select a barangay</option>`;
 
-    const cityCode = citySelect.value;
-    if (!cityCode) {
-      barangaySelect.disabled = true;
-      return;
-    }
-    barangaySelect.disabled = false;
+    if (!cityCode) return;
 
     try {
       const res = await fetch('https://psgc.gitlab.io/api/barangays.json');
-      if (!res.ok) throw new Error('Failed to fetch barangays');
       const barangays = await res.json();
-
-      const filteredBarangays = barangays.filter(b => b.municipalityCode === cityCode);
-      filteredBarangays.sort((a, b) => a.name.localeCompare(b.name));
-
-      filteredBarangays.forEach(barangay => {
-        const option = document.createElement("option");
-        option.value = barangay.code;
-        option.textContent = barangay.name;
-        barangaySelect.appendChild(option);
+      const filtered = barangays.filter(b => b.municipalityCode === cityCode);
+      filtered.sort((a, b) => a.name.localeCompare(b.name)).forEach(barangay => {
+        barangaySelect.innerHTML += `<option value="${barangay.name}">${barangay.name}</option>`;
       });
-    } catch (error) {
-      console.error("Error loading barangays:", error);
+    } catch (err) {
+      console.error("Barangays fetch error:", err);
     }
   });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    loadProvinces();
-    citySelect.disabled = true;
-    barangaySelect.disabled = true;
-  });
+  window.addEventListener('DOMContentLoaded', loadProvinces);
