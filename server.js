@@ -42,7 +42,7 @@ const validateFormData = (type, data) => {
       if (!data.deliveryDate || typeof data.deliveryDate !== "string") return "Missing or invalid 'deliveryDate'";
       // Optional: validate each item
       for (const item of data.items) {
-        if (!item.name || typeof item.name !== "string") return "Each item must have a valid 'name'";
+        if (!item.productCode || typeof item.productCode !== "string") return "Each item must have a valid 'productCode'";
         if (typeof item.quantity !== "number" || item.quantity <= 0) return "Each item must have a valid 'quantity'";
         if (typeof item.price !== "number" || item.price < 0) return "Each item must have a valid 'price'";
       }
