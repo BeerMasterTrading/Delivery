@@ -128,7 +128,7 @@ app.post("/verify", handlePost("verify", ["customerID"]));
 app.post("/login", handlePost("login", ["loginID", "password"]));
 app.post("/forgot-password", handlePost("forgotPassword", ["loginID"]));
 app.post("/reset-password", handlePost("resetPassword", ["loginID", "newPassword"]));
-app.post("/place-order", handlePost("place-order", ["customerID", "items", "deliveryDate"]));
+app.post("/place-order", handlePost("placeorder", ["customerID", "items", "deliveryDate"]));
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
